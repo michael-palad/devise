@@ -39,22 +39,21 @@ class ActionDispatch::IntegrationTest
   def sign_in_as_user(options={}, &block)
     user = create_user(options)
     visit_with_option options[:visit], new_user_session_path
-    fill_in 'email', with: options[:email] || 'user@test.com'
-    fill_in 'password', with: options[:password] || '12345678'
-    check 'remember me' if options[:remember_me] == true
+    fill_in 'Email', with: options[:email] || 'user@test.com'
+    fill_in 'Password', with: options[:password] || '12345678'
+    check 'Remember me' if options[:remember_me] == true
     yield if block_given?
-    click_button 'Log In'
+    click_on 'Log In'
     user
   end
 
   def sign_in_as_admin(options={}, &block)
     admin = create_admin(options)
     visit_with_option options[:visit], new_admin_session_path
-    fill_in 'email', with: 'admin@test.com'
-    fill_in 'password', with: '123456'
+    fill_in 'Email', with: 'admin@test.com'
+    fill_in 'Password', with: '123456'
     yield if block_given?
-    click_button 'Log In'
-    admin
+    click_on 'Log in'
   end
 
   # Fix assert_redirect_to in integration sessions because they don't take into

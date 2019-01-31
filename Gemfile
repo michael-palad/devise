@@ -20,8 +20,10 @@ group :test do
   gem "omniauth-facebook"
   gem "omniauth-openid"
   gem "timecop"
-  gem "webrat", "0.7.3", require: false
+  gem "capybara", require: false
   gem "mocha", "~> 1.1", require: false
+  gem "pry"
+  gem "pry-byebug"
 end
 
 platforms :jruby do
