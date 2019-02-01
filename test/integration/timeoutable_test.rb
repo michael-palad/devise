@@ -41,11 +41,11 @@ class SessionTimeoutTest < Devise::IntegrationTest
   test 'does not time out user session before default limit time' do
     sign_in_as_user
     assert_response :success
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
 
     get users_path
     assert_response :success
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'time out user session after default limit time when sign_out_all_scopes is false' do
@@ -58,8 +58,8 @@ class SessionTimeoutTest < Devise::IntegrationTest
 
       get users_path
       assert_redirected_to users_path
-      refute warden.authenticated?(:user)
-      assert warden.authenticated?(:admin)
+      refute_content 'Hello User user@test.com! You are signed in!'
+      assert_content 'Hello Admin admin@test.com! You are signed in!'
     end
   end
 
@@ -72,8 +72,8 @@ class SessionTimeoutTest < Devise::IntegrationTest
       assert_not_nil last_request_at
 
       get root_path
-      refute warden.authenticated?(:user)
-      refute warden.authenticated?(:admin)
+      refute_content 'Hello User user@test.com! You are signed in!'
+      refute_content 'Hello Admin admin@test.com! You are signed in!'
     end
   end
 
@@ -102,7 +102,7 @@ class SessionTimeoutTest < Devise::IntegrationTest
   test 'expired session is not extended by sign in page' do
     user = sign_in_as_user
     get expire_user_path(user)
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
 
     get "/users/sign_in"
     assert_redirected_to "/users/sign_in"
@@ -110,7 +110,7 @@ class SessionTimeoutTest < Devise::IntegrationTest
 
     assert_response :success
     assert_contain 'Sign in'
-    refute warden.authenticated?(:user)
+    refute_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'time out is not triggered on sign in' do
@@ -131,12 +131,12 @@ class SessionTimeoutTest < Devise::IntegrationTest
       get users_path
       assert_not_nil last_request_at
       assert_response :success
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
 
       get expire_user_path(user)
       get users_path
       assert_redirected_to users_path
-      refute warden.authenticated?(:user)
+      refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -174,7 +174,7 @@ class SessionTimeoutTest < Devise::IntegrationTest
 
     get users_path
     assert_response :success
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'does not crash when the last_request_at is a String' do

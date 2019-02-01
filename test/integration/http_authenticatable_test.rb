@@ -13,7 +13,7 @@ class HttpAuthenticationTest < Devise::IntegrationTest
     swap ApplicationController, allow_forgery_protection: true do
       create_user
       post exhibit_user_url(1), headers: { "HTTP_AUTHORIZATION" => "Basic #{Base64.encode64("user@test.com:12345678")}" }
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
       assert_equal "User is authenticated", response.body
     end
   end
@@ -23,7 +23,7 @@ class HttpAuthenticationTest < Devise::IntegrationTest
       sign_in_as_new_user_with_http
       assert_response 200
       assert_match '<email>user@test.com</email>', response.body
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
 
       get users_path(format: :xml)
       assert_response 200
@@ -35,7 +35,7 @@ class HttpAuthenticationTest < Devise::IntegrationTest
       sign_in_as_new_user_with_http
       assert_response 200
       assert_match '<email>user@test.com</email>', response.body
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
 
       get users_path(format: :xml)
       assert_response 401
@@ -68,7 +68,7 @@ class HttpAuthenticationTest < Devise::IntegrationTest
       sign_in_as_new_user_with_http("usertest")
       assert_response :success
       assert_match '<email>user@test.com</email>', response.body
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -77,7 +77,7 @@ class HttpAuthenticationTest < Devise::IntegrationTest
       sign_in_as_new_user_with_http("usertest")
       assert_response :success
       assert_match '<email>user@test.com</email>', response.body
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -86,7 +86,7 @@ class HttpAuthenticationTest < Devise::IntegrationTest
       sign_in_as_new_user_with_http("usertest")
       assert_response :success
       assert_match '<email>user@test.com</email>', response.body
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
     end
   end
 

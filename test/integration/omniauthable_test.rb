@@ -47,7 +47,7 @@ class OmniauthableIntegrationTest < Devise::IntegrationTest
       create_user
       visit "/users/sign_in"
       click_link "Sign in with FaceBook"
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
 
       refute User.validations_performed
     end
@@ -118,7 +118,7 @@ class OmniauthableIntegrationTest < Devise::IntegrationTest
       create_user
       visit "/users/sign_in"
       click_link "Sign in with FaceBook"
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
       assert warden.cookies["remember_user_token"]
     end
   end

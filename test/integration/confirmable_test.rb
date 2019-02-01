@@ -132,7 +132,7 @@ class ConfirmationTest < Devise::IntegrationTest
       sign_in_as_user(confirm: false)
 
       assert_contain 'You have to confirm your email address before continuing'
-      refute warden.authenticated?(:user)
+      refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -143,7 +143,7 @@ class ConfirmationTest < Devise::IntegrationTest
       end
 
       assert_contain 'Invalid Email or password'
-      refute warden.authenticated?(:user)
+      refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -152,7 +152,7 @@ class ConfirmationTest < Devise::IntegrationTest
       sign_in_as_user(confirm: false)
 
       assert_response :success
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
     end
   end
 

@@ -3,10 +3,6 @@
 require 'action_dispatch/testing/integration'
 
 class ActionDispatch::IntegrationTest
-  def warden
-    request.env['warden']
-  end
-
   def create_user(options={})
     @user ||= begin
       user = User.create!(
@@ -43,7 +39,7 @@ class ActionDispatch::IntegrationTest
     fill_in 'Password', with: options[:password] || '12345678'
     check 'Remember me' if options[:remember_me] == true
     yield if block_given?
-    click_on 'Log In'
+    click_on 'Log in'
     user
   end
 

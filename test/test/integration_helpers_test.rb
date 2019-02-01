@@ -9,7 +9,7 @@ class TestIntegrationsHelpersTest < Devise::IntegrationTest
     sign_in(create_user)
 
     visit '/'
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test '#sign_outs signs out in the resource directly' do
@@ -18,7 +18,8 @@ class TestIntegrationsHelpersTest < Devise::IntegrationTest
     sign_out user
 
     visit '/'
-    refute warden.authenticated?(:user)
+
+    refute_content 'Hello User user@test.com! You are signed in!'
   end
 
   test '#sign_out does not signs out other scopes' do
@@ -28,7 +29,7 @@ class TestIntegrationsHelpersTest < Devise::IntegrationTest
 
     visit '/'
 
-    refute warden.authenticated?(:user)
-    assert warden.authenticated?(:admin)
+    refute_content 'Hello User user@test.com! You are signed in!'
+    assert_content 'Hello Admin admin@test.com! You are signed in!'
   end
 end

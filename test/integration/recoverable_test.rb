@@ -12,7 +12,7 @@ class PasswordTest < Devise::IntegrationTest
   def request_forgot_password(&block)
     visit_new_password_path
     assert_response :success
-    refute warden.authenticated?(:user)
+    refute_content 'Hello User user@test.com! You are signed in!'
 
     fill_in 'email', with: 'user@test.com'
     yield if block_given?
@@ -100,7 +100,7 @@ class PasswordTest < Devise::IntegrationTest
 
   test 'authenticated user should not be able to visit forgot password page' do
     sign_in_as_user
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
 
     get new_user_password_path
 
@@ -132,7 +132,7 @@ class PasswordTest < Devise::IntegrationTest
     get edit_user_password_path
     assert_response :redirect
     assert_redirected_to root_path
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'not authenticated user without a reset password token should not be able to visit the page' do
@@ -195,7 +195,7 @@ class PasswordTest < Devise::IntegrationTest
     request_forgot_password
     reset_password
 
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'does not sign in user automatically after changing its password if config.sign_in_after_reset_password is false' do
@@ -234,7 +234,7 @@ class PasswordTest < Devise::IntegrationTest
 
       assert_contain 'Your password has been changed successfully.'
       assert !user.reload.access_locked?
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -246,7 +246,7 @@ class PasswordTest < Devise::IntegrationTest
 
       assert_contain 'Your password has been changed successfully.'
       assert !user.reload.access_locked?
-      assert warden.authenticated?(:user)
+      assert_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -281,7 +281,7 @@ class PasswordTest < Devise::IntegrationTest
       }
     }
     assert_response :success
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'change password with invalid token in XML format should return invalid response' do
@@ -342,7 +342,7 @@ class PasswordTest < Devise::IntegrationTest
     request_forgot_password
     reset_password
 
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
     user.reload
     assert_equal 0, user.failed_attempts
   end

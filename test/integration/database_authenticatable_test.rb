@@ -10,7 +10,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
       fill_in 'email', with: 'foo@bar.com'
     end
 
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'sign in with email of different case should fail when email is NOT the list of case insensitive keys' do
@@ -21,7 +21,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
         fill_in 'email', with: 'foo@bar.com'
       end
 
-      refute warden.authenticated?(:user)
+      refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -32,7 +32,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
       fill_in 'email', with: 'foo@bar.com'
     end
 
-    assert warden.authenticated?(:user)
+    assert_content 'Hello User user@test.com! You are signed in!'
   end
 
   test 'sign in with email including extra spaces should fail when email is NOT the list of strip whitespace keys' do
@@ -43,14 +43,14 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
         fill_in 'email', with: ' foo@bar.com '
       end
 
-      refute warden.authenticated?(:user)
+      refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
   test 'sign in should not authenticate if not using proper authentication keys' do
     swap Devise, authentication_keys: [:username] do
       sign_in_as_user
-      refute warden.authenticated?(:user)
+      refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
 
@@ -61,7 +61,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
       end
 
       assert_contain 'Invalid email address'
-      refute warden.authenticated?(:admin)
+      refute_content 'Hello Admin admin@test.com! You are signed in!'
     end
   end
 
@@ -71,7 +71,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
     end
 
     assert_contain 'Invalid Email or password'
-    refute warden.authenticated?(:admin)
+    refute_content 'Hello Admin admin@test.com! You are signed in!'
   end
 
   test 'when in paranoid mode and without a valid e-mail' do
