@@ -82,8 +82,8 @@ class OmniauthableIntegrationTest < Devise::IntegrationTest
     end
 
     assert_current_url "/"
-    assert_contain "You have signed up successfully."
-    assert_contain "Hello User user@example.com"
+    assert_content "You have signed up successfully."
+    assert_content "Hello User user@example.com"
     refute session["devise.facebook_data"]
   end
 
@@ -133,7 +133,7 @@ class OmniauthableIntegrationTest < Devise::IntegrationTest
     OmniAuth.config.mock_auth[:facebook] = :access_denied
     visit "/users/auth/facebook/callback?error=access_denied"
     assert_current_url "/users/sign_in"
-    assert_contain 'Could not authenticate you from FaceBook because "Access denied".'
+    assert_content 'Could not authenticate you from FaceBook because "Access denied".'
   end
 
   test "handles other exceptions from OmniAuth" do
@@ -143,6 +143,6 @@ class OmniauthableIntegrationTest < Devise::IntegrationTest
     click_link "Sign in with FaceBook"
 
     assert_current_url "/users/sign_in"
-    assert_contain 'Could not authenticate you from FaceBook because "Invalid credentials".'
+    assert_content 'Could not authenticate you from FaceBook because "Invalid credentials".'
   end
 end

@@ -7,10 +7,10 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
     create_user(email: 'Foo@Bar.com')
 
     sign_in_as_user do
-      fill_in 'email', with: 'foo@bar.com'
+      fill_in 'Email', with: 'foo@bar.com'
     end
 
-    assert_content 'Hello User user@test.com! You are signed in!'
+    assert_content 'Hello User foo@bar.com! You are signed in!'
   end
 
   test 'sign in with email of different case should fail when email is NOT the list of case insensitive keys' do
@@ -18,7 +18,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
       create_user(email: 'Foo@Bar.com')
 
       sign_in_as_user do
-        fill_in 'email', with: 'foo@bar.com'
+        fill_in 'Email', with: 'foo@bar.com'
       end
 
       refute_content 'Hello User user@test.com! You are signed in!'
@@ -29,10 +29,10 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
     create_user(email: ' foo@bar.com ')
 
     sign_in_as_user do
-      fill_in 'email', with: 'foo@bar.com'
+      fill_in 'Email', with: 'foo@bar.com'
     end
 
-    assert_content 'Hello User user@test.com! You are signed in!'
+    assert_content 'Hello User foo@bar.com! You are signed in!'
   end
 
   test 'sign in with email including extra spaces should fail when email is NOT the list of strip whitespace keys' do
@@ -40,7 +40,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
       create_user(email: 'foo@bar.com')
 
       sign_in_as_user do
-        fill_in 'email', with: ' foo@bar.com '
+        fill_in 'Email', with: ' foo@bar.com '
       end
 
       refute_content 'Hello User user@test.com! You are signed in!'
@@ -57,32 +57,30 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
   test 'sign in with invalid email should return to sign in form with error message' do
     store_translations :en, devise: { failure: { admin: { not_found_in_database: 'Invalid email address' } } } do
       sign_in_as_admin do
-        fill_in 'email', with: 'wrongemail@test.com'
+        fill_in 'Email', with: 'wrongemail@test.com'
       end
 
-      assert_contain 'Invalid email address'
-      refute_content 'Hello Admin admin@test.com! You are signed in!'
+      assert_content 'Invalid email address'
     end
   end
 
   test 'sign in with invalid pasword should return to sign in form with error message' do
     sign_in_as_admin do
-      fill_in 'password', with: 'abcdef'
+      fill_in 'Password', with: 'abcdef'
     end
 
-    assert_contain 'Invalid Email or password'
-    refute_content 'Hello Admin admin@test.com! You are signed in!'
+    assert_content 'Invalid Email or password'
   end
 
   test 'when in paranoid mode and without a valid e-mail' do
     swap Devise, paranoid: true do
       store_translations :en, devise: { failure: { not_found_in_database: 'Not found in database' } } do
         sign_in_as_user do
-          fill_in 'email', with: 'wrongemail@test.com'
+          fill_in 'Email', with: 'wrongemail@test.com'
         end
-        
-        assert_not_contain 'Not found in database'
-        assert_contain 'Invalid Email or password.'
+
+        refute_content 'Not found in database'
+        assert_content 'Invalid Email or password.'
       end
     end
   end
@@ -90,10 +88,10 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
   test 'error message is configurable by resource name' do
     store_translations :en, devise: { failure: { admin: { invalid: "Invalid credentials" } } } do
       sign_in_as_admin do
-        fill_in 'password', with: 'abcdef'
+        fill_in 'Password', with: 'abcdef'
       end
 
-      assert_contain 'Invalid credentials'
+      assert_content 'Invalid credentials'
     end
   end
 
@@ -104,7 +102,7 @@ class DatabaseAuthenticationTest < Devise::IntegrationTest
     user.expects :after_database_authentication
 
     sign_in_as_user do
-      fill_in 'email', with: 'foo@bar.com'
+      fill_in 'Email', with: 'foo@bar.com'
     end
   end
 end

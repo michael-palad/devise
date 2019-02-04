@@ -124,7 +124,7 @@ class AuthenticationSanityTest < Devise::IntegrationTest
     assert_redirected_to root_path
 
     get root_path
-    assert_contain 'Signed out successfully'
+    assert_content 'Signed out successfully'
     refute_content 'Hello Admin admin@test.com! You are signed in!'
   end
 
@@ -134,7 +134,7 @@ class AuthenticationSanityTest < Devise::IntegrationTest
     assert_redirected_to root_path
 
     get root_path
-    assert_contain 'Signed out successfully'
+    assert_content 'Signed out successfully'
   end
 
   test 'scope uses custom failure app' do
@@ -168,7 +168,7 @@ class AuthenticationRoutesRestrictions < Devise::IntegrationTest
 
     assert_response :success
     assert_template 'home/private'
-    assert_contain 'Private!'
+    assert_content 'Private!'
   end
 
   test 'signed in as inactive admin should not be able to access private/active route restricted to active admins (authenticate denied)' do
@@ -190,7 +190,7 @@ class AuthenticationRoutesRestrictions < Devise::IntegrationTest
 
     assert_response :success
     assert_template 'home/private'
-    assert_contain 'Private!'
+    assert_content 'Private!'
   end
 
   test 'signed in as admin should get admin dashboard (authenticated accepted)' do
@@ -198,11 +198,9 @@ class AuthenticationRoutesRestrictions < Devise::IntegrationTest
     assert_content 'Hello Admin admin@test.com! You are signed in!'
     refute_content 'Hello User user@test.com! You are signed in!'
 
-    get dashboard_path
+    visit dashboard_path
 
-    assert_response :success
-    assert_template 'home/admin_dashboard'
-    assert_contain 'Admin dashboard'
+    assert_content 'Admin dashboard'
   end
 
   test 'signed in as user should get user dashboard (authenticated accepted)' do
@@ -210,11 +208,9 @@ class AuthenticationRoutesRestrictions < Devise::IntegrationTest
     assert_content 'Hello User user@test.com! You are signed in!'
     refute_content 'Hello Admin admin@test.com! You are signed in!'
 
-    get dashboard_path
+    visit dashboard_path
 
-    assert_response :success
-    assert_template 'home/user_dashboard'
-    assert_contain 'User dashboard'
+    assert_content 'User dashboard'
   end
 
   test 'not signed in should get no dashboard (authenticated denied)' do
@@ -242,7 +238,7 @@ class AuthenticationRoutesRestrictions < Devise::IntegrationTest
 
     assert_response :success
     assert_template 'home/admin_dashboard'
-    assert_contain 'Admin dashboard'
+    assert_content 'Admin dashboard'
   end
 
   test 'signed in user should not see unauthenticated page (unauthenticated denied)' do
@@ -260,7 +256,7 @@ class AuthenticationRoutesRestrictions < Devise::IntegrationTest
 
     assert_response :success
     assert_template 'home/join'
-    assert_contain 'Join'
+    assert_content 'Join'
   end
 end
 
@@ -272,7 +268,7 @@ class AuthenticationRedirectTest < Devise::IntegrationTest
     assert_redirected_to warden_path
 
     get warden_path
-    assert_contain 'You need to sign in or sign up before continuing.'
+    assert_content 'You need to sign in or sign up before continuing.'
   end
 
   test 'redirect to default url if no other was configured' do
@@ -317,13 +313,15 @@ class AuthenticationRedirectTest < Devise::IntegrationTest
 
   test 'redirect to configured home path for a given scope after sign in' do
     sign_in_as_admin
-    assert_equal "/admin_area/home", @request.path
+
+    assert_equal "/admin_area/home", current_path
   end
 
   test 'require_no_authentication should set the already_authenticated flash message' do
     sign_in_as_user
     visit new_user_session_path
-    assert_equal flash[:alert], I18n.t("devise.failure.already_authenticated")
+
+    assert_content I18n.t("devise.failure.already_authenticated")
   end
 end
 
@@ -345,6 +343,7 @@ class AuthenticationSessionTest < Devise::IntegrationTest
       token = request.session[:_csrf_token]
 
       sign_in_as_user
+      require 'pry'; binding.pry
       assert_not_equal request.session[:_csrf_token], token
     ensure
       ApplicationController.allow_forgery_protection = false
@@ -427,9 +426,9 @@ class AuthenticationOthersTest < Devise::IntegrationTest
 
   test 'uses the custom controller with the custom controller view' do
     get '/admin_area/sign_in'
-    assert_contain 'Log in'
-    assert_contain 'Welcome to "admins/sessions" controller!'
-    assert_contain 'Welcome to "sessions/new" view!'
+    assert_content 'Log in'
+    assert_content 'Welcome to "admins/sessions" controller!'
+    assert_content 'Welcome to "sessions/new" view!'
   end
 
   test 'render 404 on roles without routes' do
@@ -550,7 +549,6 @@ class AuthenticationOthersTest < Devise::IntegrationTest
       sign_in_as_user
       delete destroy_user_session_path, xhr: true, headers: { "HTTP_ACCEPT" => "text/html,*/*" }
       assert_response :redirect
-      refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
 end
@@ -559,7 +557,7 @@ class AuthenticationKeysTest < Devise::IntegrationTest
   test 'missing authentication keys cause authentication to abort' do
     swap Devise, authentication_keys: [:subdomain] do
       sign_in_as_user
-      assert_contain "Invalid Subdomain or password."
+      assert_content "Invalid Subdomain or password."
       refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
@@ -598,7 +596,7 @@ class AuthenticationRequestKeysTest < Devise::IntegrationTest
 
     swap Devise, request_keys: [:subdomain] do
       sign_in_as_user
-      assert_contain "Invalid Email or password."
+      assert_content "Invalid Email or password."
       refute_content 'Hello User user@test.com! You are signed in!'
     end
   end
@@ -699,11 +697,11 @@ class DoubleSignOutRedirectTest < Devise::IntegrationTest
     post destroy_sign_out_via_delete_or_post_session_path
 
     get root_path
-    assert_contain 'Signed out successfully.'
+    assert_content 'Signed out successfully.'
 
     post destroy_sign_out_via_delete_or_post_session_path
 
     get root_path
-    assert_contain 'Signed out successfully.'
+    assert_content 'Signed out successfully.'
   end
 end
